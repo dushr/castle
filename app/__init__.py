@@ -40,4 +40,7 @@ def not_found(error):
     return render_template('404.html'), 404
 
 from app.users.views import mod as usersModule
+from app.auth.views import mod as authModule
+
 app.register_blueprint(usersModule)
+app.register_blueprint(authModule)

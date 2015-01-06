@@ -1,6 +1,13 @@
 from app import db
 from app.users import constants as USER
 
+from app.clients.models import Client
+
+
+clients = db.Table('clients',
+    db.Column('client_id', db.Integer, db.ForeignKey('clients_client.id')),
+    db.Column('user_id', db.Integer, db.ForeignKey('users_user.id')),
+)
 
 class User(db.Model):
 
@@ -11,6 +18,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, index=True)
     password = db.Column(db.String(120))
     role = db.Column(db.SmallInteger, default=USER.USER)
+    clients = db.relationship('Client', secondary=clients,
+                              backref=db.backref('users_user', lazy='dynamic'))
 
 
     def __init__(self, name=None, email=None, password=None):

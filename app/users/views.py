@@ -28,15 +28,20 @@ def login():
 
     form = LoginForm(request.form)
 
+    if 'next' in request.args:
+        print request.args['next']
+        session['next'] = request.args['next']
+
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
             session['user_id'] = user.id
 
-            flash('Welcome %s' % user.name)
-            return redirect(url_for('users.home'))
+            flash('Welcome %s' % user.name, 'success')
+            next_page = session.get('next') or url_for('users.home')
+            return redirect(next_page)
 
-        flash('Wrong email or password', 'error-message')
+        flash('Wrong email or password', 'danger')
 
     return render_template("users/login.html", form=form)
 
@@ -57,7 +62,7 @@ def register():
 
         session['user_id'] = user.id
 
-        flash('Thanks for registering')
+        flash('Thanks for registering', 'success')
         return redirect(url_for('users.home'))
 
     return render_template("users/register.html", form=form)

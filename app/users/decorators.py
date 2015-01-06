@@ -8,7 +8,8 @@ def requires_login(f):
     def decorated_function(*args, **kwargs):
         if g.user is None:
             flash(u'You need to be Signed in for this page.')
-            return redirect(url_for('users.login', next=request.path))
+            next = "%s?%s" %( request.path, request.query_string)
+            return redirect(url_for('users.login', next=next))
         return f(*args, **kwargs)
 
     return decorated_function
